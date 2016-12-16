@@ -1,29 +1,14 @@
-class SessionsController < ApplicationController
-  skip_before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token, only: [:destroy]
-  
-  def new
-    @user = User.new
-  end
-
+class SessionsController < Devise::SessionsController
   def create
-    user = User.find_by(user_params)
-    if user
-      log_in(user.id)
-      redirect_to chatrooms_path
-    else
-      redirect_to login_path, flash[:notice] =  {username: ["doesn't exist"]}
+    unless current_user.nil?
+      cookies.signed[:user_id] = current_user.id
     end
+    super
   end
 
   def destroy
-    reset_session
-    redirect_to root_path
+    current_user.offline
+    cookies.signed[:user_id] = nil
+    super
   end
-
-  private
-
-    def user_params
-      params.require(:user).permit(:username)
-    end
 end
