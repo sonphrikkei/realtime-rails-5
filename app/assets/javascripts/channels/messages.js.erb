@@ -1,28 +1,12 @@
 $(function() {
   submitNewMessage();
-
-<% Chatroom.all.each do |chatroom| %>  
-//  console.log(chatroom);
-  App['room' + <%=chatroom.id%>] = App.cable.subscriptions.create({channel: 'MessagesChannel', room: <%=chatroom.id%>}, {  
-  received: function(data) {
-    console.log(data);
-   $("[data-chatroom='" + data.chatroom_id + "']").removeClass('hidden');
-    return $("[data-chatroom='" + data.chatroom_id + "']").append(data.message);
-  },
-
-  setChatroomId: function(chatroomId) {
-    this.chatroomId = chatroomId
-  }
-});
-
-<% end %>
 });
 function submitNewMessage(){
   $('textarea#message_content').keydown(function(event) {
     if (event.keyCode == 13) {
         var msg = event.target.value
         var chatroomId = $("[data-chatroom]").data().chatroom
-        App['room' + chatroomId].setChatroomId(chatroomId)
+        // App['room' + chatroomId].setChatroomId(chatroomId)
         App['room' + chatroomId].send({message: msg, chatroom_id: chatroomId})
         $('[data-textarea="message"]').val(" ")
         return false;
