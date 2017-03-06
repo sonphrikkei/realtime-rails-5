@@ -1,15 +1,13 @@
-$(document).on('turbolinks:load', function() {
+$(function() {
   submitNewMessage();
-});
-
-
 
 <% Chatroom.all.each do |chatroom| %>  
 //  console.log(chatroom);
   App['room' + <%=chatroom.id%>] = App.cable.subscriptions.create({channel: 'MessagesChannel', room: <%=chatroom.id%>}, {  
   received: function(data) {
-   $("[data-chatroom='" + this.chatroomId + "']").removeClass('hidden')
-    return $("[data-chatroom='" + this.chatroomId + "']").append(data.message);
+    console.log(data);
+   $("[data-chatroom='" + data.chatroom_id + "']").removeClass('hidden');
+    return $("[data-chatroom='" + data.chatroom_id + "']").append(data.message);
   },
 
   setChatroomId: function(chatroomId) {
@@ -18,7 +16,7 @@ $(document).on('turbolinks:load', function() {
 });
 
 <% end %>
-
+});
 function submitNewMessage(){
   $('textarea#message_content').keydown(function(event) {
     if (event.keyCode == 13) {
